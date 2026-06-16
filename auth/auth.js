@@ -5,7 +5,7 @@
  */
 
 // Backend API base URL — always points to our Express server on port 5000
-const API_BASE = window.PitchLive_API || 'http://localhost:5000/api';
+const API_BASE = window.PitchLive_API || (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
 
 // ============================================================
 // Token Storage & Management

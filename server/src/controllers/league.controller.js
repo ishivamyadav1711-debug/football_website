@@ -9,6 +9,7 @@ const LEAGUE_MAP = {
   'BL1': 78, // Bundesliga
   'FL1': 61, // Ligue 1
   'CL': 2,   // Champions League
+  'EL': 3,   // Europa League
 };
 
 exports.getLeagueDetails = async (req, res, next) => {
@@ -20,11 +21,13 @@ exports.getLeagueDetails = async (req, res, next) => {
     const apiLeagueId = LEAGUE_MAP[leagueCode] || 39;
 
     // Fetch in parallel
-    const [standingsReq, scorersReq, assistsReq, fixturesReq] = await Promise.all([
+    const [standingsReq, scorersReq, assistsReq, fixturesReq, resultsReq, teamsReq] = await Promise.all([
       fetchFromApiWithCache('/standings', { league: apiLeagueId, season }, 7200),
       fetchFromApiWithCache('/players/topscorers', { league: apiLeagueId, season }, 86400),
       fetchFromApiWithCache('/players/topassists', { league: apiLeagueId, season }, 86400),
-      fetchFromApiWithCache('/fixtures', { league: apiLeagueId, season, next: 15 }, 7200)
+      fetchFromApiWithCache('/fixtures', { league: apiLeagueId, season, next: 15 }, 7200),
+      fetchFromApiWithCache('/fixtures', { league: apiLeagueId, season, last: 15 }, 7200),
+      fetchFromApiWithCache('/teams', { league: apiLeagueId, season }, 86400)
     ]);
 
     // Handle Standings
@@ -44,6 +47,7 @@ exports.getLeagueDetails = async (req, res, next) => {
       standings = leagueData.standings[0].map(row => ({
         pos: row.rank,
         team: row.team.name,
+        team_id: row.team.id,
         crest: row.team.logo,
         pld: row.all.played,
         w: row.all.win,
@@ -91,12 +95,40 @@ exports.getLeagueDetails = async (req, res, next) => {
         id: f.fixture.id,
         date: new Date(f.fixture.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
         time: new Date(f.fixture.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
-        home: { name: f.teams.home.name, crest: f.teams.home.logo },
-        away: { name: f.teams.away.name, crest: f.teams.away.logo },
+        home: f.teams.home.name, 
+        home_crest: f.teams.home.logo,
+        away: f.teams.away.name, 
+        away_crest: f.teams.away.logo,
         league: leagueInfo.name
       }));
     }
-    const results = [];
+
+    let results = [];
+    if (resultsReq.response) {
+      results = resultsReq.response.map(f => ({
+        id: f.fixture.id,
+        date: new Date(f.fixture.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+        time: new Date(f.fixture.date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
+        home: f.teams.home.name, 
+        home_crest: f.teams.home.logo,
+        away: f.teams.away.name, 
+        away_crest: f.teams.away.logo,
+        home_score: f.goals.home,
+        away_score: f.goals.away,
+        league: leagueInfo.name
+      }));
+    }
+
+    let teams = [];
+    if (teamsReq.response) {
+      teams = teamsReq.response.map(t => ({
+        id: t.team.id,
+        name: t.team.name,
+        logo: t.team.logo,
+        founded: t.team.founded,
+        venue: t.venue.name
+      }));
+    }
 
     res.json({
       success: true,
@@ -107,7 +139,8 @@ exports.getLeagueDetails = async (req, res, next) => {
         top_scorers,
         top_assists,
         fixtures,
-        results
+        results,
+        teams
       }
     });
   } catch (err) {

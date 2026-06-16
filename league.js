@@ -4,7 +4,7 @@ let leagueData = null;
 const urlParams = new URLSearchParams(window.location.search);
 const leagueId = urlParams.get('id') || 'PL';
 
-const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
 
 async function fetchLeagueDetails() {
   const season = document.getElementById('season-filter').value;
@@ -20,6 +20,7 @@ async function fetchLeagueDetails() {
   document.getElementById('assists-container').innerHTML = `<div class="skeleton skeleton-card"></div>`;
   document.querySelector('#tab-fixtures .data-table-wrapper').innerHTML = `<div class="skeleton skeleton-card"></div>`;
   document.querySelector('#tab-results .data-table-wrapper').innerHTML = `<div class="skeleton skeleton-card"></div>`;
+  document.getElementById('teams-container').innerHTML = `<div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>`;
   
   try {
     const res = await fetch(`${API_URL}/leagues/${leagueId}?season=${encodeURIComponent(season)}`);
@@ -54,6 +55,7 @@ function renderAll() {
   renderTopAssists();
   renderFixtures();
   renderResults();
+  renderTeams();
 }
 
 function renderHero() {
@@ -93,7 +95,7 @@ function renderStandings() {
     if (row.pos >= 18) posClass = 'pos-rel';
 
     return `
-      <tr>
+      <tr style="cursor: pointer; transition: background 0.2s;" onclick="window.location.href='team.html?id=${row.team_id}'" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
         <td class="col-pos ${posClass}">${row.pos}</td>
         <td class="col-team">
           <img src="${row.crest}" alt="${row.team}" class="team-crest-small">
@@ -251,6 +253,30 @@ function renderResults() {
         <span style="font-weight: ${f.away_score > f.home_score ? '800; color: #fff;' : '500; color: var(--muted);'} font-size: 1.1rem;">${f.away}</span>
       </div>
     </div>
+  `).join('');
+}
+
+function renderTeams() {
+  const container = document.getElementById('teams-container');
+  const teams = leagueData.teams || [];
+
+  if (teams.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1;">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <div class="empty-state-title">No Teams Found</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = teams.map(t => `
+    <article class="league-card" role="button" tabindex="0" onclick="window.location.href='team.html?id=${t.id}'">
+      <div class="league-card-emblem">
+        <img src="${t.logo}" alt="${t.name}" style="width: 40px; height: 40px; object-fit: contain;">
+      </div>
+      <div class="league-card-name">${t.name}</div>
+      <div class="league-card-country">${t.venue || 'Stadium'} • Est. ${t.founded || 'N/A'}</div>
+    </article>
   `).join('');
 }
 

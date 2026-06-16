@@ -132,7 +132,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
-          <button class="btn-outline-sm" id="view-all-live">View All</button>
+          <button class="btn-outline-sm" id="view-all-live" onclick="window.location.href='#live'">View All</button>
         </div>
       </div>
 
@@ -150,10 +150,59 @@
           <h2 class="section-title">Today's Fixtures</h2>
           <span class="section-subtitle">Live action and upcoming</span>
         </div>
-        <button class="btn-outline-sm">Full Schedule</button>
+        <button class="btn-outline-sm" onclick="window.location.href='#fixtures'">Full Schedule</button>
       </div>
       <div class="fixtures-list" id="fixtures-list">
         <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== LEAGUES =================== -->
+  <section class="section leagues-section" id="leagues">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">Top Leagues</h2>
+          <span class="section-subtitle">Follow the biggest competitions</span>
+        </div>
+      </div>
+      <div class="leagues-grid" id="leagues-grid">
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=PL'">
+          <div class="league-card-emblem">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+          <div class="league-card-name">Premier League</div>
+          <div class="league-card-country">England</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=PD'">
+          <div class="league-card-emblem">🇪🇸</div>
+          <div class="league-card-name">La Liga</div>
+          <div class="league-card-country">Spain</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=BL1'">
+          <div class="league-card-emblem">🇩🇪</div>
+          <div class="league-card-name">Bundesliga</div>
+          <div class="league-card-country">Germany</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=SA'">
+          <div class="league-card-emblem">🇮🇹</div>
+          <div class="league-card-name">Serie A</div>
+          <div class="league-card-country">Italy</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=FL1'">
+          <div class="league-card-emblem">🇫🇷</div>
+          <div class="league-card-name">Ligue 1</div>
+          <div class="league-card-country">France</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=CL'">
+          <div class="league-card-emblem">⭐</div>
+          <div class="league-card-name">Champions League</div>
+          <div class="league-card-country">Europe</div>
+        </article>
+        <article class="league-card" role="button" tabindex="0" onclick="window.location.href='league.html?id=EL'">
+          <div class="league-card-emblem">🏆</div>
+          <div class="league-card-name">Europa League</div>
+          <div class="league-card-country">Europe</div>
+        </article>
       </div>
     </div>
   </section>

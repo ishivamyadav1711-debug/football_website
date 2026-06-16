@@ -1,4 +1,4 @@
-const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
 
 const MOCK_FIXTURES = [
   { id: '101', home: 'Arsenal', home_crest: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg', away: 'Man City', away_crest: 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg' },

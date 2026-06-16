@@ -1,32 +1,17 @@
 // Global Search Initialization
 document.addEventListener('DOMContentLoaded', () => {
-  const navContainer = document.querySelector('.nav-container');
-  if (!navContainer) return;
-
-  // Search DOM Structure
-  const searchHtml = `
-    <div class="global-search">
-      <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="global-search-input" placeholder="Search teams, players, leagues..." autocomplete="off">
-      </div>
-      <div class="search-dropdown" id="search-dropdown"></div>
-    </div>
-  `;
-
-  // Inject after logo but before nav-links or auth container
-  const logo = navContainer.querySelector('.logo');
-  if (logo) {
-    logo.insertAdjacentHTML('afterend', searchHtml);
-  } else {
-    navContainer.insertAdjacentHTML('afterbegin', searchHtml);
-  }
-
-  // Search Logic
   const searchInput = document.getElementById('global-search-input');
-  const dropdown = document.getElementById('search-dropdown');
-  const SEARCH_API = (typeof API_BASE !== 'undefined' ? API_BASE : 'http://localhost:5000/api') + '/search';
+  const resultsContainer = document.getElementById('search-results');
+  
+  if (!searchInput || !resultsContainer) return;
+
+  const SEARCH_API = (typeof API_BASE !== 'undefined' ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api')) + '/search';
   let timeoutId;
+
+  // Make resultsContainer act like the dropdown for search.css
+  resultsContainer.classList.add('search-dropdown');
+  // It needs relative positioning to show up nicely under the input in the overlay, or we rely on the search.css
+  // Actually, search.css absolute positions .search-dropdown. Let's just use it.
 
   searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
@@ -34,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearTimeout(timeoutId);
 
     if (query.length === 0) {
-      dropdown.classList.remove('active');
+      resultsContainer.classList.remove('active');
       return;
     }
 
@@ -44,10 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   });
 
-  // Hide dropdown when clicking outside
+  // Hide on click outside
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.global-search')) {
-      dropdown.classList.remove('active');
+    if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+      resultsContainer.classList.remove('active');
     }
   });
 
@@ -64,13 +49,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const query = searchInput.value.trim();
+      if (query.length > 0) {
+        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+      }
+    }
+  });
+
   function renderDropdown(results) {
-    dropdown.innerHTML = '';
-    
-    if (results.length === 0) {
-      dropdown.innerHTML = '<div class="search-no-results">No results found</div>';
+    const query = searchInput.value.trim();
+    if (!results || results.length === 0) {
+      resultsContainer.innerHTML = '<div class="search-no-results">No results found</div>';
     } else {
-      dropdown.innerHTML = results.slice(0, 5).map(r => `
+      let html = results.slice(0, 5).map(r => `
         <a href="${r.url}" class="search-result-item">
           <img src="${r.image}" class="search-result-img" alt="${r.name}" onerror="this.src='https://cdn.sportmonks.com/images/soccer/placeholder.png'">
           <div class="search-result-info">
@@ -79,8 +72,16 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </a>
       `).join('');
+      
+      html += `
+        <a href="search.html?q=${encodeURIComponent(query)}" class="search-result-item" style="justify-content: center; background: rgba(34, 197, 94, 0.1); border-top: 1px solid var(--border);">
+          <span style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">View all results for "${query}"</span>
+        </a>
+      `;
+      
+      resultsContainer.innerHTML = html;
     }
     
-    dropdown.classList.add('active');
+    resultsContainer.classList.add('active');
   }
 });

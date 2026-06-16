@@ -299,127 +299,57 @@
     </div>
   </nav>
 
-  <!-- League Hero -->
-  <header class="league-hero" id="league-hero" style="background-image: url('');">
+  <!-- Search Hero -->
+  <header class="league-hero" id="search-hero" style="background: linear-gradient(135deg, var(--surface), var(--primary));">
     <div class="league-hero-overlay"></div>
-    <div class="league-hero-content">
-      <div class="league-logo-wrap" id="league-logo">
-        <!-- Logo injected by JS -->
-      </div>
+    <div class="league-hero-content" style="align-items: center; justify-content: center; text-align: center;">
       <div>
-        <h1 class="league-title" id="league-name">Loading League...</h1>
-        <div class="league-meta" id="league-country">--</div>
+        <h1 class="league-title" id="search-title">Search Results</h1>
+        <div class="league-meta" id="search-subtitle">Searching...</div>
       </div>
     </div>
   </header>
 
-  <!-- Filter Toolbar -->
-  <div class="filter-bar">
-    <div class="filter-container">
-      <div class="filter-group">
-        <span class="filter-label">Season</span>
-        <select class="filter-select" id="season-filter">
-          <option value="25/26">2025/2026</option>
-          <option value="24/25">2024/2025</option>
-          <option value="23/24">2023/2024</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <span class="filter-label">Matchday</span>
-        <select class="filter-select" id="matchday-filter">
-          <option value="all">All Matchdays</option>
-          <option value="38">Matchday 38</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <span class="filter-label">Team</span>
-        <select class="filter-select" id="team-filter">
-          <option value="all">All Teams</option>
-          <option value="arsenal">Arsenal</option>
-          <option value="mancity">Man City</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
   <!-- Navigation Tabs -->
-  <nav class="league-nav">
-    <button class="league-tab active" data-tab="standings">Standings</button>
-    <button class="league-tab" data-tab="fixtures">Fixtures</button>
-    <button class="league-tab" data-tab="results">Results</button>
-    <button class="league-tab" data-tab="stats">Top Scorers</button>
-    <button class="league-tab" data-tab="assists">Top Assists</button>
+  <nav class="league-nav" id="search-nav">
+    <button class="league-tab active" data-tab="all">All Results</button>
+    <button class="league-tab" data-tab="players">Players</button>
     <button class="league-tab" data-tab="teams">Teams</button>
+    <button class="league-tab" data-tab="leagues">Leagues</button>
   </nav>
 
   <!-- Content Containers -->
   <main class="league-content">
     
-    <!-- Standings Tab -->
-    <section id="tab-standings" class="tab-section active">
-      <div class="data-table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th class="col-pos">#</th>
-              <th class="col-team">Club</th>
-              <th>MP</th>
-              <th class="hide-mobile">W</th>
-              <th class="hide-mobile">D</th>
-              <th class="hide-mobile">L</th>
-              <th class="hide-mobile">GF</th>
-              <th class="hide-mobile">GA</th>
-              <th>GD</th>
-              <th class="col-pts">Pts</th>
-              <th class="hide-mobile">Form</th>
-            </tr>
-          </thead>
-          <tbody id="standings-body">
-            <!-- Standings injected by JS -->
-          </tbody>
-        </table>
+    <!-- All Results Tab -->
+    <section id="tab-all" class="tab-section active">
+      <div class="leagues-grid" id="all-container">
+        <!-- Results injected by JS -->
       </div>
     </section>
 
-    <!-- Fixtures Tab -->
-    <section id="tab-fixtures" class="tab-section">
-      <div class="data-table-wrapper" style="padding: 40px; text-align: center; color: var(--muted);">
-        Fixtures will be generated based on the selected Matchday filter.
-      </div>
-    </section>
-
-    <!-- Results Tab -->
-    <section id="tab-results" class="tab-section">
-      <div class="data-table-wrapper" style="padding: 40px; text-align: center; color: var(--muted);">
-        Results will be populated here.
-      </div>
-    </section>
-
-    <!-- Top Scorers Tab -->
-    <section id="tab-stats" class="tab-section">
-      <div class="leaderboard-list" id="scorers-container">
-        <!-- Scorers injected by JS -->
-      </div>
-    </section>
-
-    <!-- Top Assists Tab -->
-    <section id="tab-assists" class="tab-section">
-      <div class="leaderboard-list" id="assists-container">
-        <!-- Assists injected by JS -->
+    <!-- Players Tab -->
+    <section id="tab-players" class="tab-section">
+      <div class="leagues-grid" id="players-container">
       </div>
     </section>
 
     <!-- Teams Tab -->
     <section id="tab-teams" class="tab-section">
-      <div class="leagues-grid" id="teams-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
-        <!-- Teams injected by JS -->
+      <div class="leagues-grid" id="teams-container">
+      </div>
+    </section>
+
+    <!-- Leagues Tab -->
+    <section id="tab-leagues" class="tab-section">
+      <div class="leagues-grid" id="leagues-container">
       </div>
     </section>
 
   </main>
 
   <script src="auth/auth.js"></script>
-  <script src="league.js"></script>
+  <script src="search-page.js"></script>
   </footer>
 
   <!-- Mobile Bottom Navigation -->

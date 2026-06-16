@@ -1,6 +1,6 @@
 // favorites-ui.js
 document.addEventListener('DOMContentLoaded', () => {
-  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
   
   // Create Favorite Button
   const btn = document.createElement('button');

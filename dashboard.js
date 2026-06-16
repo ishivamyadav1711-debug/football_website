@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
   
   // Requires auth
   const token = localStorage.getItem('accessToken');

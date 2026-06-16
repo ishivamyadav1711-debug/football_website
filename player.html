@@ -287,32 +287,62 @@
     </div>
   </div>
 
-  <!-- Visualizations -->
-  <main class="charts-container">
+  <!-- Navigation Tabs -->
+  <nav class="league-nav" id="player-nav" style="max-width: 1200px; margin: 30px auto; padding: 0 40px; display: flex; gap: 30px; border-bottom: 1px solid rgba(255,255,255,0.05); overflow-x: auto;">
+    <button class="league-tab active" data-tab="details" style="background: none; border: none; color: var(--muted); font-size: 1.1rem; font-weight: 600; padding: 15px 0; cursor: pointer; position: relative;">Player Details</button>
+    <button class="league-tab" data-tab="statistics" style="background: none; border: none; color: var(--muted); font-size: 1.1rem; font-weight: 600; padding: 15px 0; cursor: pointer; position: relative;">Player Statistics</button>
+    <button class="league-tab" data-tab="related" style="background: none; border: none; color: var(--muted); font-size: 1.1rem; font-weight: 600; padding: 15px 0; cursor: pointer; position: relative;">Related Players</button>
+  </nav>
+
+  <!-- Visualizations & Tabs -->
+  <main class="league-content" style="max-width: 1200px; margin: 0 auto 60px; padding: 0 40px;">
     
-    <!-- Radar Chart (Attributes) -->
-    <div class="chart-card">
-      <div class="chart-title">Performance Radar <span>Current Season</span></div>
-      <div class="canvas-wrapper radar-wrapper">
-        <canvas id="radarChart"></canvas>
+    <!-- Player Details Tab -->
+    <section id="tab-details" class="tab-section active" style="animation: fadeIn 0.4s ease forwards;">
+      <div class="data-table-wrapper" style="padding: 40px; text-align: center; color: var(--muted); background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+        <h2 style="color: var(--text); margin-bottom: 20px;">Biography</h2>
+        <div id="player-bio-details" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left;">
+          <!-- Bio details injected by JS -->
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Bar Chart (Seasonal Comparison) -->
-    <div class="chart-card">
-      <div class="chart-title">Goals vs xG <span>Seasonal</span></div>
-      <div class="canvas-wrapper">
-        <canvas id="barChart"></canvas>
-      </div>
-    </div>
+    <!-- Player Statistics Tab -->
+    <section id="tab-statistics" class="tab-section" style="display: none; animation: fadeIn 0.4s ease forwards;">
+      <div class="charts-container" style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin: 0;">
+        
+        <!-- Radar Chart (Attributes) -->
+        <div class="chart-card">
+          <div class="chart-title">Performance Radar <span>Current Season</span></div>
+          <div class="canvas-wrapper radar-wrapper">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
 
-    <!-- Line Chart (Career Progression) -->
-    <div class="chart-card wide">
-      <div class="chart-title">Career Progression <span>Market Value vs Goal Contributions</span></div>
-      <div class="canvas-wrapper">
-        <canvas id="lineChart"></canvas>
+        <!-- Bar Chart (Seasonal Comparison) -->
+        <div class="chart-card">
+          <div class="chart-title">Goals vs xG <span>Seasonal</span></div>
+          <div class="canvas-wrapper">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Line Chart (Career Progression) -->
+        <div class="chart-card wide">
+          <div class="chart-title">Career Progression <span>Market Value vs Goal Contributions</span></div>
+          <div class="canvas-wrapper">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Related Players Tab -->
+    <section id="tab-related" class="tab-section" style="display: none; animation: fadeIn 0.4s ease forwards;">
+      <div class="leagues-grid" id="related-players-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+        <!-- Related Players injected by JS -->
+      </div>
+    </section>
 
   </main>
 

@@ -31,6 +31,7 @@ exports.getPlayerDetails = async (req, res, next) => {
         name: apiPlayer.name,
         team_name: apiStats.team?.name || 'Unknown',
         team_logo: apiStats.team?.logo || 'https://cdn.sportmonks.com/images/soccer/placeholder.png',
+        team_id: apiStats.team?.id,
         position: position,
         age: apiPlayer.age || '?',
         nationality: apiPlayer.nationality || 'Unknown',
@@ -66,8 +67,34 @@ exports.getPlayerDetails = async (req, res, next) => {
           { subject: 'Dribbling', A: dribbling, fullMark: 100 },
           { subject: 'Defending', A: defending, fullMark: 100 },
           { subject: 'Physical', A: physical, fullMark: 100 }
-        ]
+        ],
+        related_players: []
       };
+
+      // Fetch related players (same team)
+      if (mappedPlayer.team_id) {
+        try {
+          const squadReq = await fetchFromApiWithCache('/squads', { team: mappedPlayer.team_id }, 86400);
+          if (squadReq.response && squadReq.response.length > 0 && squadReq.response[0].players) {
+            const squad = squadReq.response[0].players;
+            // Filter out the current player, randomly select 4
+            mappedPlayer.related_players = squad
+              .filter(p => String(p.id) !== String(mappedPlayer.id))
+              .sort(() => 0.5 - Math.random())
+              .slice(0, 4)
+              .map(p => ({
+                id: p.id,
+                name: p.name,
+                position: p.position || 'Unknown',
+                image: p.photo,
+                team_name: mappedPlayer.team_name,
+                team_logo: mappedPlayer.team_logo
+              }));
+          }
+        } catch (squadErr) {
+          logger.error('Error fetching squad for related players:', squadErr);
+        }
+      }
 
       return res.json({ success: true, data: { player: mappedPlayer } });
     }

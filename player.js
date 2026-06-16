@@ -4,7 +4,7 @@ let playerData = null;
 const urlParams = new URLSearchParams(window.location.search);
 const playerId = urlParams.get('id') || '107'; // Default to Saka
 
-const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
 
 // Chart Theme Colors
 const COLORS = {
@@ -63,7 +63,78 @@ function renderBio() {
       🎂 Age ${p.age}
     </div>
   `;
+
+  // Render extended bio
+  document.getElementById('player-bio-details').innerHTML = `
+    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 600;">Full Name</div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--text);">${p.name}</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 600;">Age</div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--text);">${p.age} Years Old</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 600;">Nationality</div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--text);">${p.flag} ${p.nationality}</div>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 600;">Current Team</div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 10px;">
+        <img src="${p.team_logo}" alt="Club" style="width: 24px; height: 24px;"> ${p.team_name}
+      </div>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div style="font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 600;">Primary Position</div>
+      <div style="font-size: 1.2rem; font-weight: 700; color: var(--text);">${p.position}</div>
+    </div>
+  `;
+
+  // Render related players
+  renderRelatedPlayers();
 }
+
+function renderRelatedPlayers() {
+  const container = document.getElementById('related-players-container');
+  const rp = playerData.related_players || [];
+  
+  if (rp.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column: 1 / -1; padding: 40px; text-align: center;">
+        <div style="font-size: 1.2rem; color: var(--muted);">No related players found.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = rp.map(r => `
+    <article class="league-card" role="button" tabindex="0" onclick="window.location.href='player.html?id=${r.id}&api=true'">
+      <div class="league-card-emblem" style="background: transparent; border: none; overflow: hidden;">
+        <img src="${r.image}" alt="${r.name}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%" onerror="this.src='https://cdn.sportmonks.com/images/soccer/placeholder.png'">
+      </div>
+      <div class="league-card-name">${r.name}</div>
+      <div class="league-card-country">${r.position}</div>
+      <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+        <img src="${r.team_logo}" style="width: 20px; height: 20px; object-fit: contain; border-radius: 50%;">
+      </div>
+    </article>
+  `).join('');
+}
+
+// Setup Tabs
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.league-tab');
+  const sections = document.querySelectorAll('.tab-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('active'));
+      
+      tab.classList.add('active');
+      document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+    });
+  });
+});
 
 function renderStatsRibbon() {
   const s = playerData.current_season;

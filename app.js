@@ -314,7 +314,7 @@ async function fetchAndRenderNews(category = 'all') {
   if (!featured || !sidebar) return;
 
   try {
-    const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+    const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
     const json = await fetchWithCache(`${API_URL}/news?category=${category}`, {}, 300000); // 5 mins cache
     
     if (json.success) {
@@ -447,7 +447,7 @@ const navLinks = document.querySelectorAll('.nav-link');
 const searchBtn = document.getElementById('nav-search-btn');
 const searchOverlay = document.getElementById('search-overlay');
 const searchClose = document.getElementById('search-close');
-const searchInput = document.getElementById('search-input');
+const searchInput = document.getElementById('global-search-input'); // Fixed ID mismatch
 
 // Scroll effect
 window.addEventListener('scroll', () => {
@@ -475,7 +475,7 @@ document.querySelectorAll('.mobile-nav-link').forEach(link => {
 // Search
 searchBtn.addEventListener('click', () => {
   searchOverlay.classList.add('active');
-  setTimeout(() => searchInput.focus(), 100);
+  setTimeout(() => { if (searchInput) searchInput.focus(); }, 100);
 });
 searchClose.addEventListener('click', () => searchOverlay.classList.remove('active'));
 document.addEventListener('keydown', e => {
@@ -591,7 +591,7 @@ document.querySelectorAll('.section').forEach(s => sectionObserver.observe(s));
 
 function setupRealTime() {
   // Use the API_BASE if defined globally (from auth.js), else default to localhost:5000
-  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE.replace('/api', '') : 'http://localhost:5000';
+  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE.replace('/api', '') : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000' : '');
   
   if (typeof io === 'undefined') {
     console.warn('Socket.io not loaded.');
@@ -757,7 +757,7 @@ document.addEventListener('click', (e) => {
 
 async function fetchLiveMatches() {
   try {
-    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+    const API_URL = window.location.hostname === 'localhost' ? (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api') : '/api';
     const json = await fetchWithCache(`${API_URL}/matches/live`, {}, 15000); // 15 sec cache for live scores
     if (json.success) {
       LIVE_MATCHES = json.data.matches;
@@ -866,7 +866,7 @@ async function openWatchModal(matchId, matchTitle) {
   chatContainer.style.display = 'flex';
 
   // FETCH STREAMS & CHAT HISTORY
-  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+  const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
   
   try {
     const [streamRes, chatRes] = await Promise.all([
@@ -955,7 +955,7 @@ function escapeHtml(unsafe) {
 
 async function init() {
   try {
-    const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+    const API_URL = window.location.hostname === 'localhost' ? (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api') : '/api';
     
     // Fetch league data (Premier League defaults)
     const leagueRes = await fetchWithCache(`${API_URL}/leagues/PL`, {}, 300000); // 5 mins cache

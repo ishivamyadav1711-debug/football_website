@@ -4,7 +4,7 @@ let teamData = null;
 const urlParams = new URLSearchParams(window.location.search);
 const teamId = urlParams.get('id') || '1'; // Default to 1 (Arsenal) if no ID
 
-const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : 'http://localhost:5000/api';
+const API_URL = (typeof API_BASE !== 'undefined') ? API_BASE : (['localhost', '127.0.0.1'].includes(window.location.hostname) ? 'http://localhost:5000/api' : '/api');
 
 async function fetchTeamDetails() {
   try {
@@ -29,7 +29,6 @@ function renderAll() {
   renderFixtures();
   renderResults();
   renderStats();
-  renderTransfers();
 }
 
 function renderHero() {
@@ -41,7 +40,6 @@ function renderHero() {
   document.getElementById('team-meta').innerHTML = `
     <span>🏆 ${t.league}</span>
     <span>📍 ${t.stadium}, ${t.country}</span>
-    <span>📊 Position: ${t.position}</span>
   `;
 }
 
@@ -50,10 +48,10 @@ function renderOverview() {
   document.getElementById('overview-text').textContent = t.overview;
   
   document.getElementById('overview-info').innerHTML = `
-    <div class="info-item"><label>Founded</label><span>${t.founded}</span></div>
-    <div class="info-item"><label>Manager</label><span>${t.manager}</span></div>
-    <div class="info-item"><label>Stadium</label><span>${t.stadium}</span></div>
-    <div class="info-item"><label>Capacity</label><span>${t.capacity}</span></div>
+    <div class="info-item"><label>Founded</label><span>${t.founded || 'Unknown'}</span></div>
+    <div class="info-item"><label>Manager</label><span>${t.manager || 'Unknown'}</span></div>
+    <div class="info-item"><label>Stadium</label><span>${t.stadium || 'Unknown'}</span></div>
+    <div class="info-item"><label>Capacity</label><span>${t.capacity || 'N/A'}</span></div>
   `;
 }
 
@@ -76,16 +74,16 @@ function renderSquad() {
       html += `<h2 class="squad-group-title">${pos}s</h2>`;
       html += `<div class="squad-grid">`;
       html += grouped[pos].map(p => `
-        <article class="player-card">
+        <article class="player-card" onclick="window.location.href='player.html?id=${p.id}&api=true'">
           <div class="player-img-wrap">
             <img src="${p.image}" alt="${p.name}" onerror="this.src='https://cdn.sportmonks.com/images/soccer/placeholder.png'">
-            <div class="player-rating-badge">${p.rating.toFixed(1)}</div>
+            <div class="player-rating-badge">${p.rating}</div>
           </div>
           <div class="player-info">
             <div class="player-name">${p.name}</div>
             <div class="player-pos">${p.position}</div>
             <div class="player-meta">
-              <span>🎂 ${p.age}</span>
+              <span>🎂 ${p.age || '?'}</span>
               <span>${p.nationality}</span>
             </div>
           </div>
@@ -145,6 +143,11 @@ function renderStats() {
   const container = document.getElementById('stats-container');
   const s = teamData.stats;
 
+  if (!s || s.played === 0) {
+    container.innerHTML = `<div style="color:var(--muted)">No statistics available for this team.</div>`;
+    return;
+  }
+
   container.innerHTML = `
     <div class="info-item"><label>Matches Played</label><span>${s.played}</span></div>
     <div class="info-item"><label>Wins</label><span>${s.won}</span></div>
@@ -153,30 +156,8 @@ function renderStats() {
     <div class="info-item"><label>Goals For</label><span>${s.goals_for}</span></div>
     <div class="info-item"><label>Goals Against</label><span>${s.goals_against}</span></div>
     <div class="info-item"><label>Clean Sheets</label><span>${s.clean_sheets}</span></div>
-    <div class="info-item"><label>Yellow Cards</label><span>${s.yellow_cards}</span></div>
+    <div class="info-item"><label>Yellow/Red Cards</label><span>${s.yellow_cards} / ${s.red_cards}</span></div>
   `;
-}
-
-function renderTransfers() {
-  const container = document.getElementById('transfers-container');
-  const t = teamData.transfers;
-
-  if (!t || t.length === 0) {
-    container.innerHTML = `<div style="color:var(--muted)">No recent transfers.</div>`;
-    return;
-  }
-
-  container.innerHTML = t.map(tr => {
-    const badgeClass = tr.type === 'In' ? 'bg-green' : 'bg-red';
-    return `
-      <div class="list-row">
-        <div class="list-date">${tr.date}</div>
-        <div class="list-main">${tr.player} <span style="color:var(--muted); font-size:0.9rem; font-weight:400; margin-left:10px;">${tr.type==='In'?'from':'to'} ${tr.from_to}</span></div>
-        <div class="list-comp">${tr.fee}</div>
-        <div class="list-badge ${badgeClass}">${tr.type}</div>
-      </div>
-    `;
-  }).join('');
 }
 
 // Tab Switching
