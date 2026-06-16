@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchLive — Match Details</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth.css">
+  <link rel="stylesheet" href="/search.css">
+
+  <style>
+    /* Specific styles for Match Details */
+    .match-hero {
+      margin-top: 80px;
+      padding: 60px 20px;
+      background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)), url('https://images.unsplash.com/photo-1518605368461-1e12dce38435?q=80&w=2000&auto=format&fit=crop') center/cover;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .match-scoreboard {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .match-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+    }
+
+    .match-crest-wrap {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 3rem;
+    }
+
+    .match-team-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .match-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .match-score-main {
+      font-family: 'Poppins', sans-serif;
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .match-status-badge {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .match-status-badge.live {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      animation: pulseLive 2s infinite;
+    }
+
+    .match-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .match-content {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+
+    .match-tabs {
+      display: flex;
+      gap: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
+    }
+
+    .match-tab {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 10px 0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .match-tab.active {
+      color: var(--accent);
+    }
+
+    .match-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(-50%);
+    }
+
+    .timeline-event {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      position: relative;
+      width: 100%;
+    }
+
+    .timeline-event.home { justify-content: flex-start; }
+    .timeline-event.away { justify-content: flex-end; }
+
+    .timeline-content {
+      width: 45%;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .timeline-event.away .timeline-content {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    .timeline-minute {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--secondary);
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: 2px solid var(--primary);
+      z-index: 2;
+    }
+
+    .timeline-icon { font-size: 1.2rem; }
+    .timeline-player { font-weight: 600; font-size: 1rem; }
+    .timeline-assist { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    /* Stats Panel */
+    .stat-row {
+      margin-bottom: 20px;
+    }
+    
+    .stat-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .stat-bar-container {
+      display: flex;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stat-bar-home {
+      height: 100%;
+      background: #3B82F6; /* Blue for home */
+      transition: width 0.5s ease;
+    }
+
+    .stat-bar-away {
+      height: 100%;
+      background: #EF4444; /* Red for away */
+      transition: width 0.5s ease;
+    }
+
+    .momentum-graph {
+      height: 150px;
+      background: linear-gradient(to top, rgba(34, 197, 94, 0.1), transparent);
+      border-bottom: 2px solid var(--accent);
+      position: relative;
+      margin-top: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 10px;
+      gap: 2px;
+    }
+
+    .momentum-bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 2px 2px 0 0;
+      opacity: 0.8;
+      transition: height 0.3s ease;
+    }
+    .momentum-bar.away-adv {
+      background: #EF4444;
+    }
+
+    @media (max-width: 768px) {
+      .match-scoreboard {
+        gap: 15px;
+      }
+      .match-crest-wrap {
+        width: 60px; height: 60px; font-size: 2rem;
+      }
+      .match-score-main {
+        font-size: 2.5rem;
+      }
+      .match-content {
+        grid-template-columns: 1fr;
+      }
+      .timeline::before { left: 30px; }
+      .timeline-event.home, .timeline-event.away { justify-content: flex-end; }
+      .timeline-content { width: calc(100% - 60px); }
+      .timeline-event.away .timeline-content { flex-direction: row; text-align: left; }
+      .timeline-minute { left: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚽</span>
+        Score<span class="logo-highlight">X</span>
+      </a>
+      <!-- Add desktop menu items... -->
+    </div>
+  </nav>
+
+  <!-- Match Hero -->
+  <header class="match-hero" id="match-hero">
+    <!-- Populated by JS -->
+    <div style="text-align:center; padding: 50px;">Loading Match...</div>
+  </header>
+
+  <!-- Match Content -->
+  <main class="match-content">
+    
+    <!-- Left Column: Timeline & Momentum -->
+    <section class="match-main-col">
+      <div class="match-tabs">
+        <button class="match-tab active" data-target="timeline">Timeline</button>
+        <button class="match-tab" data-target="lineups">Lineups</button>
+        <button class="match-tab" data-target="momentum">Attack Momentum</button>
+      </div>
+
+      <div id="timeline-container" class="timeline">
+        <!-- Events populated by JS -->
+      </div>
+
+      <div id="momentum-container" style="display: none;">
+        <h3>Attack Momentum</h3>
+        <p class="match-meta">Real-time pressure graph (Home vs Away)</p>
+        <div class="momentum-graph" id="momentum-graph">
+          <!-- Bars generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Statistics & Form -->
+    <aside class="match-sidebar">
+      <div class="card" style="padding: 25px; margin-bottom: 25px;">
+        <h3 style="margin-bottom: 20px;">Match Statistics</h3>
+        <div id="stats-container">
+          <!-- Stats populated by JS -->
+        </div>
+      </div>
+
+      <div class="card" style="padding: 25px;">
+        <h3 style="margin-bottom: 20px;">Form Guide</h3>
+        <div id="form-container">
+          <!-- Form populated by JS -->
+        </div>
+      </div>
+      
+      <!-- Chart.js for Momentum Graphs -->
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      <!-- Security: DOMPurify -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    </aside>
+
+  </main>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="auth/auth.js"></script>
+  <script src="match.js"></script>
+<script src="/search.js"></script>
+</body>
+</html>
+

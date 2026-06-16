@@ -1,0 +1,167 @@
+/* Mobile Optimization - Native App Feel */
+
+@media (max-width: 768px) {
+  
+  /* Disable double-tap to zoom for instantaneous native-feeling taps */
+  * {
+    touch-action: manipulation;
+  }
+
+  body {
+    /* Safe area bottom padding for iPhone home indicator */
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Top Navigation Overrides                                                 */
+  /* -------------------------------------------------------------------------- */
+  
+  /* Hide desktop links and auth buttons on mobile */
+  .nav-links,
+  .auth-buttons {
+    display: none !important;
+  }
+
+  /* Keep the logo and notification bell centered or justified */
+  .navbar .nav-container {
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .nav-right {
+    gap: 15px !important;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Bottom Navigation Bar                                                    */
+  /* -------------------------------------------------------------------------- */
+  
+  .mobile-bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: calc(65px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(15, 23, 42, 0.85); /* var(--bg-dark) with opacity */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+  }
+
+  .mbn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: #94a3b8; /* var(--muted) */
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 600;
+    gap: 4px;
+    transition: color 0.2s;
+  }
+
+  .mbn-item svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    transition: transform 0.2s;
+  }
+
+  .mbn-item.active {
+    color: #3b82f6; /* var(--accent) */
+  }
+
+  .mbn-item.active svg {
+    transform: translateY(-2px);
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* Native Scroll Snapping (Carousels)                                       */
+  /* -------------------------------------------------------------------------- */
+  
+  /* Live Match Container */
+  .matches-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+    padding: 20px 20px 40px 20px;
+    margin: 0 -20px; /* Bleed to edge */
+    gap: 15px;
+  }
+
+  .matches-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for native feel */
+  }
+
+  .match-card {
+    scroll-snap-align: center;
+    flex: 0 0 85vw; /* Take up 85% of screen width, hinting at next card */
+    min-width: 85vw;
+  }
+
+  /* Prediction Cards */
+  .predictions-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
+    margin: 0; 
+    gap: 15px;
+    grid-template-columns: none !important; /* Override desktop grid */
+  }
+
+  .predictions-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pred-card {
+    scroll-snap-align: center;
+    flex: 0 0 90vw;
+    min-width: 90vw;
+  }
+
+  /* League Tabs */
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+
+  /* Toast Adjustments */
+  #toast-container {
+    bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Hide mobile nav on desktop */
+@media (min-width: 769px) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+}

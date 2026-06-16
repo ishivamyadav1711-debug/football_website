@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchLive — AI Match Predictions</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth.css">
+  <link rel="stylesheet" href="/search.css">
+  <link rel="stylesheet" href="mobile.css">
+  <meta name="theme-color" content="#0f172a">
+  
+  <style>
+    .predictions-hero {
+      margin-top: 70px;
+      padding: 60px 40px;
+      text-align: center;
+      background: radial-gradient(circle at 50% -20%, rgba(34, 197, 94, 0.15) 0%, var(--bg-dark) 50%);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .predictions-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 15px;
+    }
+    .predictions-title span {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .predictions-subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .predictions-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 30px;
+    }
+
+    /* Prediction Card */
+    .pred-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+    }
+    .pred-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border-color: rgba(34, 197, 94, 0.2);
+    }
+    .pred-header {
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.01);
+    }
+    .pred-team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 40%;
+    }
+    .pred-crest {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+    }
+    .pred-team-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .pred-vs {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+    }
+
+    /* AI Analysis Section */
+    .pred-body {
+      padding: 25px;
+    }
+    .confidence-badge {
+      position: absolute;
+      top: 15px; left: 15px;
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    /* Probability Bar */
+    .prob-container { margin: 20px 0; }
+    .prob-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .prob-bar-wrapper {
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      overflow: hidden;
+    }
+    .prob-segment {
+      height: 100%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .prob-home { background: #3b82f6; } /* Blue for Home */
+    .prob-draw { background: #64748b; } /* Grey for Draw */
+    .prob-away { background: #ef4444; } /* Red for Away */
+
+    /* Insights Grid */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .insight-item {
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .insight-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .form-badges {
+      display: flex;
+      gap: 3px;
+      justify-content: center;
+    }
+    .form-badge {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 700;
+    }
+    .f-W { background: #22c55e; color: #000; }
+    .f-D { background: #64748b; color: #fff; }
+    .f-L { background: #ef4444; color: #fff; }
+
+    /* Community Voting Section */
+    .voting-section {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 20px 25px;
+      background: rgba(0,0,0,0.2);
+    }
+    .vote-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    .vote-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .vote-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      padding: 10px 0;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .vote-btn:hover { background: rgba(255,255,255,0.1); }
+    .vote-btn.selected {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+    
+    /* Voted State (Results) */
+    .vote-results {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .vote-result-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .vote-result-label { width: 50px; font-size: 0.85rem; font-weight: 600; }
+    .vote-result-bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .vote-result-bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 1s; }
+    .vote-result-pct { width: 40px; text-align: right; font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚽</span>
+        Score<span class="logo-highlight">X</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="league.html" class="nav-link">Leagues</a>
+        <a href="predictions.html" class="nav-link active">Predictions</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="predictions-hero">
+    <h1 class="predictions-title">AI Match <span>Predictions</span></h1>
+    <p class="predictions-subtitle">Leveraging historical data, team form, and head-to-head statistics to predict the outcomes of the biggest upcoming fixtures.</p>
+  </header>
+
+  <main class="predictions-container" id="predictions-grid">
+    <!-- Cards injected by JS -->
+    <div style="grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 50px;">
+      <div class="loading-spinner"></div>
+      <p style="margin-top: 15px;">Analyzing upcoming fixtures...</p>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+    <a href="index.html" class="mbn-item">
+      <svg><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Home
+    </a>
+    <a href="league.html" class="mbn-item">
+      <svg><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      Leagues
+    </a>
+    <a href="predictions.html" class="mbn-item active">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      Predict
+    </a>
+    <a href="auth/profile.html" class="mbn-item">
+      <svg><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      Profile
+    </a>
+  </nav>
+
+  <script src="auth/auth.js"></script>
+  <script src="/search.js"></script>
+  <script src="predictions.js"></script>
+  <script src="mobile-gestures.js"></script>
+</body>
+</html>
+

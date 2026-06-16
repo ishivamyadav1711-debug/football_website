@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchLive — Player Profile</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth.css">
+  <link rel="stylesheet" href="/search.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Player Hero Section */
+    .player-hero {
+      margin-top: 70px;
+      position: relative;
+      height: 500px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .player-hero-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+      filter: blur(8px) saturate(0.5);
+      z-index: 1;
+    }
+
+    .player-hero-gradient {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(15,23,42,1) 0%, rgba(15,23,42,0.8) 40%, rgba(15,23,42,0.1) 100%);
+      z-index: 2;
+    }
+
+    .player-hero-content {
+      position: relative;
+      z-index: 3;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 0 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 100%;
+    }
+
+    .player-info-panel {
+      padding-bottom: 50px;
+      max-width: 600px;
+      animation: slideInLeft 0.6s ease-out forwards;
+    }
+
+    .player-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .player-meta-badges {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .player-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .player-badge img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    .market-value-tag {
+      display: inline-block;
+      background: rgba(34,197,94,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(34,197,94,0.3);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .player-cutout {
+      position: absolute;
+      right: 5%;
+      bottom: -10px;
+      height: 110%;
+      z-index: 3;
+      animation: slideInUp 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+    
+    .player-cutout img {
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom;
+      filter: drop-shadow(-10px 10px 20px rgba(0,0,0,0.5));
+    }
+
+    /* Top Stats Ribbon */
+    .stats-ribbon {
+      background: var(--secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      z-index: 10;
+    }
+
+    .stats-ribbon-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 30px 40px;
+    }
+
+    .ribbon-stat {
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+    .ribbon-stat:last-child { border-right: none; }
+
+    .ribbon-val {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .ribbon-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Visualizations Grid */
+    .charts-container {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 30px;
+    }
+
+    .chart-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      position: relative;
+    }
+
+    .chart-card.wide {
+      grid-column: span 2;
+    }
+
+    .chart-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-title span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+      background: rgba(255,255,255,0.1);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+    
+    .radar-wrapper {
+      height: 350px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Animations */
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .charts-container { grid-template-columns: 1fr; }
+      .chart-card.wide { grid-column: span 1; }
+      .player-cutout { opacity: 0.2; right: -50px; z-index: 1; }
+      .player-hero-content { z-index: 4; }
+      .stats-ribbon-container { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .ribbon-stat { border-right: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⚽</span>
+        Score<span class="logo-highlight">X</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Player Hero -->
+  <header class="player-hero">
+    <div class="player-hero-bg" id="player-bg"></div>
+    <div class="player-hero-gradient"></div>
+    
+    <div class="player-cutout">
+      <img id="player-cutout-img" src="" alt="">
+    </div>
+
+    <div class="player-hero-content">
+      <div class="player-info-panel">
+        <h1 class="player-name" id="player-name">Loading...</h1>
+        
+        <div class="player-meta-badges" id="player-badges">
+          <!-- Badges injected by JS -->
+        </div>
+
+        <div class="market-value-tag" id="market-value">--</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Top Stats Ribbon -->
+  <div class="stats-ribbon">
+    <div class="stats-ribbon-container" id="stats-ribbon">
+      <!-- Ribbons injected by JS -->
+    </div>
+  </div>
+
+  <!-- Visualizations -->
+  <main class="charts-container">
+    
+    <!-- Radar Chart (Attributes) -->
+    <div class="chart-card">
+      <div class="chart-title">Performance Radar <span>Current Season</span></div>
+      <div class="canvas-wrapper radar-wrapper">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Bar Chart (Seasonal Comparison) -->
+    <div class="chart-card">
+      <div class="chart-title">Goals vs xG <span>Seasonal</span></div>
+      <div class="canvas-wrapper">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Line Chart (Career Progression) -->
+    <div class="chart-card wide">
+      <div class="chart-title">Career Progression <span>Market Value vs Goal Contributions</span></div>
+      <div class="canvas-wrapper">
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="auth/auth.js"></script>
+  <script src="player.js"></script>
+<script src="/search.js"></script>
+<script src="/favorites-ui.js"></script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — PitchLive</title>
+  <meta name="description" content="Manage your PitchLive account, sessions, and preferences.">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <div class="auth-bg">
+    <div class="auth-orb auth-orb-1"></div>
+    <div class="auth-orb auth-orb-2"></div>
+    <div class="auth-orb auth-orb-3"></div>
+  </div>
+
+  <div class="auth-page profile-page">
+    <div class="profile-layout">
+
+      <!-- Header Bar -->
+      <div class="profile-header-bar">
+        <a href="../index.html" class="profile-back">← PitchLive</a>
+        <h1 style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;">My Account</h1>
+        <button id="logout-btn" style="margin-left:auto;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;">
+          Sign Out
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading-state" style="text-align:center;padding:60px 0;color:var(--muted)">
+        Loading your profile...
+      </div>
+
+      <!-- Profile Content -->
+      <div id="profile-content" style="display:none">
+        <div class="profile-grid">
+
+          <!-- Sidebar -->
+          <div class="profile-sidebar-card">
+            <div class="avatar-section">
+              <div class="avatar-wrapper">
+                <div class="avatar-placeholder" id="avatar-placeholder"></div>
+                <img id="avatar-img" src="" alt="avatar" class="avatar-img" style="display:none;" onerror="this.style.display='none';document.getElementById('avatar-placeholder').style.display='flex'">
+              </div>
+              <div>
+                <div class="profile-name" id="profile-name">—</div>
+                <div class="profile-username" id="profile-username">@—</div>
+              </div>
+              <div id="role-badge" class="role-badge user">👤 User</div>
+            </div>
+
+            <div style="margin-bottom:20px">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Email</div>
+              <div style="font-size:14px;word-break:break-all" id="profile-email">—</div>
+            </div>
+
+            <div style="margin-bottom:20px">
+              <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Member since</div>
+              <div style="font-size:14px" id="profile-created">—</div>
+            </div>
+
+            <!-- Connected Accounts -->
+            <div>
+              <div style="font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:500">Connected Accounts</div>
+              <div id="google-badge" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(15,23,42,0.4);border:1px solid var(--border);border-radius:var(--radius);">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                <span id="google-status" style="font-size:13px;">Google</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content -->
+          <div>
+            <!-- Tabs -->
+            <div class="section-tabs">
+              <button class="tab-btn active" data-tab="profile-tab">Profile</button>
+              <button class="tab-btn" data-tab="security-tab">Security</button>
+              <button class="tab-btn" data-tab="sessions-tab">Sessions</button>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-panel active" id="profile-tab">
+              <div class="profile-content-card">
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">Edit Profile</h3>
+                <div id="profile-update-alert"></div>
+                <form id="profile-form" style="display:flex;flex-direction:column;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label" for="edit-display-name">Display Name</label>
+                    <input type="text" id="edit-display-name" class="form-input" placeholder="Your full name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="edit-username" disabled style="opacity:0.5;cursor:not-allowed;">
+                    <span style="font-size:12px;color:var(--muted)">Username cannot be changed</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="edit-email" disabled style="opacity:0.5;cursor:not-allowed;">
+                  </div>
+                  <button type="submit" class="btn-primary" id="save-profile-btn" style="width:auto;align-self:flex-start;padding:12px 28px;">
+                    Save Changes
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div class="tab-panel" id="security-tab">
+              <div class="profile-content-card">
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:20px;">Change Password</h3>
+                <div id="password-alert"></div>
+                <div id="google-only-msg" style="display:none">
+                  <div class="alert alert-info">
+                    ℹ️ Your account uses Google Sign-In. Password change is not available.
+                  </div>
+                </div>
+                <form id="password-form" style="display:flex;flex-direction:column;gap:16px;">
+                  <div class="form-group">
+                    <label class="form-label" for="current-password">Current Password</label>
+                    <div class="input-wrapper">
+                      <input type="password" id="current-password" class="form-input" placeholder="Your current password">
+                      <button type="button" class="input-icon-btn" data-toggle-password="current-password"><span class="eye-icon">👁️</span></button>
+                    </div>
+                    <span class="form-error" id="current-password-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="new-password">New Password</label>
+                    <div class="input-wrapper">
+                      <input type="password" id="new-password" class="form-input" placeholder="Min. 8 characters">
+                      <button type="button" class="input-icon-btn" data-toggle-password="new-password"><span class="eye-icon">👁️</span></button>
+                    </div>
+                    <div class="strength-meter" id="pw-strength-bars">
+                      <div class="strength-bar"></div><div class="strength-bar"></div>
+                      <div class="strength-bar"></div><div class="strength-bar"></div>
+                    </div>
+                    <div class="strength-label" id="pw-strength-label"></div>
+                    <span class="form-error" id="new-password-error"></span>
+                  </div>
+                  <button type="submit" class="btn-primary" id="change-password-btn" style="width:auto;align-self:flex-start;padding:12px 28px;">
+                    Update Password
+                  </button>
+                </form>
+
+                <div class="danger-zone" style="margin-top:28px">
+                  <div class="danger-title">⚠️ Danger Zone</div>
+                  <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Sign out from every device where you're currently logged in.</p>
+                  <button class="btn-danger" id="logout-all-btn">Sign Out All Devices</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sessions Tab -->
+            <div class="tab-panel" id="sessions-tab">
+              <div class="profile-content-card">
+                <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Active Sessions</h3>
+                <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Devices currently logged into your account</p>
+                <div id="sessions-list">
+                  <div style="color:var(--muted);font-size:14px;text-align:center;padding:20px">Loading sessions...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    let currentUser = null;
+
+    const roleBadge = { user: '👤 User', moderator: '🛡️ Moderator', admin: '⚡ Admin' };
+
+    const populateProfile = (user) => {
+      currentUser = user;
+
+      document.getElementById('profile-name').textContent = user.display_name || user.username;
+      document.getElementById('profile-username').textContent = '@' + user.username;
+      document.getElementById('profile-email').textContent = user.email;
+      document.getElementById('profile-created').textContent = new Date(user.created_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+      document.getElementById('edit-display-name').value = user.display_name || '';
+      document.getElementById('edit-username').value = user.username;
+      document.getElementById('edit-email').value = user.email;
+
+      // Avatar
+      const placeholder = document.getElementById('avatar-placeholder');
+      const img = document.getElementById('avatar-img');
+      if (user.avatar_url) {
+        img.src = user.avatar_url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      } else {
+        placeholder.textContent = (user.display_name || user.username || '?')[0].toUpperCase();
+      }
+
+      // Role badge
+      const badge = document.getElementById('role-badge');
+      badge.textContent = roleBadge[user.role] || '👤 User';
+      badge.className = `role-badge ${user.role}`;
+
+      // Google connection status
+      const googleStatus = document.getElementById('google-status');
+      googleStatus.textContent = user.google_connected ? 'Google (Connected)' : 'Google (Not connected)';
+
+      // Hide password form for Google-only accounts
+      if (user.google_connected && !user.password_hash) {
+        document.getElementById('password-form').style.display = 'none';
+        document.getElementById('google-only-msg').style.display = 'block';
+      }
+    };
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(target).classList.add('active');
+
+        if (target === 'sessions-tab') loadSessions();
+      });
+    });
+
+    // Load sessions
+    const loadSessions = async () => {
+      const res = await AuthManager.apiCall('/users/sessions');
+      const data = await res.json();
+      const container = document.getElementById('sessions-list');
+
+      if (!data.success || !data.data.sessions.length) {
+        container.innerHTML = '<div style="color:var(--muted);font-size:14px;text-align:center;padding:20px">No active sessions found</div>';
+        return;
+      }
+
+      container.innerHTML = data.data.sessions.map((s, i) => `
+        <div class="session-card">
+          <div class="session-info">
+            <div class="session-device-icon">${s.device_info?.includes('Mobile') ? '📱' : '💻'}</div>
+            <div>
+              <div class="session-device">${s.device_info?.split(' ').slice(0,3).join(' ') || 'Unknown device'}</div>
+              <div class="session-meta">${s.ip_address || 'Unknown IP'} · ${new Date(s.created_at).toLocaleDateString()}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${i === 0 ? '<span class="session-current">Current</span>' : `<button class="btn-revoke" onclick="revokeSession('${s.id}', this)">Revoke</button>`}
+          </div>
+        </div>
+      `).join('');
+    };
+
+    const revokeSession = async (sessionId, btn) => {
+      btn.textContent = '...';
+      btn.disabled = true;
+      const res = await AuthManager.apiCall(`/users/sessions/${sessionId}`, { method: 'DELETE' });
+      if (res.ok) {
+        btn.closest('.session-card').remove();
+      } else {
+        btn.textContent = 'Revoke';
+        btn.disabled = false;
+      }
+    };
+    window.revokeSession = revokeSession;
+
+    // Save profile
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const displayName = document.getElementById('edit-display-name').value.trim();
+      const btn = document.getElementById('save-profile-btn');
+      btn.classList.add('loading'); btn.disabled = true;
+
+      const res = await AuthManager.apiCall('/users/profile', {
+        method: 'PATCH',
+        body: JSON.stringify({ display_name: displayName }),
+      });
+      const data = await res.json();
+
+      btn.classList.remove('loading'); btn.disabled = false;
+
+      if (data.success) {
+        showAlert('profile-update-alert', 'Profile updated successfully!', 'success');
+        populateProfile(data.data.user);
+        AuthManager._user = data.data.user;
+        localStorage.setItem('sx_user', JSON.stringify(data.data.user));
+      } else {
+        showAlert('profile-update-alert', data.message || 'Failed to update profile', 'error');
+      }
+    });
+
+    // Change password
+    initPasswordToggles();
+    initStrengthMeter('new-password', 'pw-strength-bars', 'pw-strength-label');
+
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const current = document.getElementById('current-password').value;
+      const newPw = document.getElementById('new-password').value;
+      if (!current) return showFieldError('current-password', 'Enter your current password');
+      if (newPw.length < 8) return showFieldError('new-password', 'Must be at least 8 characters');
+
+      const btn = document.getElementById('change-password-btn');
+      btn.classList.add('loading'); btn.disabled = true;
+
+      const res = await AuthManager.apiCall('/users/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ current_password: current, new_password: newPw }),
+      });
+      const data = await res.json();
+
+      btn.classList.remove('loading'); btn.disabled = false;
+
+      if (data.success) {
+        showAlert('password-alert', 'Password changed. You have been signed out.', 'success');
+        setTimeout(() => AuthManager.logout(), 2000);
+      } else {
+        showAlert('password-alert', data.message || 'Failed', 'error');
+      }
+    });
+
+    // Logout All
+    document.getElementById('logout-all-btn').addEventListener('click', async () => {
+      if (!confirm('Sign out from all devices?')) return;
+      await AuthManager.apiCall('/auth/logout-all', { method: 'POST' });
+      AuthManager.clearAuth();
+      window.location.href = 'login.html';
+    });
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => AuthManager.logout());
+
+    // Init: require auth, then load profile
+    (async () => {
+      const user = await AuthManager.requireAuth('login.html');
+      if (user) {
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('profile-content').style.display = 'block';
+        populateProfile(user);
+      }
+    })();
+  </script>
+</body>
+</html>
+

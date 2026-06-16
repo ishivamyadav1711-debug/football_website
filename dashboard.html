@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchLive — Dashboard</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth.css">
+  <link rel="stylesheet" href="search.css">
+
+  <style>
+    .dashboard-hero {
+      margin-top: 70px;
+      padding: 60px 40px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(15,23,42,1) 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .dashboard-hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .welcome-text {
+      font-family: 'Poppins', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .welcome-subtext {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .dashboard-content {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 40px;
+    }
+
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Favorites Grid */
+    .favorites-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .fav-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .fav-card:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--accent);
+      transform: translateY(-5px);
+    }
+    .fav-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+    .fav-card-type {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    /* Feed Layout */
+    .feed-placeholder {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-content { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="15" fill="#0f172a" />
+            <rect x="6" y="8" width="20" height="16" rx="2" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <line x1="16" y1="8" x2="16" y2="24" stroke="#22c55e" stroke-width="1.5" />
+            <circle cx="16" cy="16" r="3" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <path d="M6 12 Q9 12 9 16 Q9 20 6 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <path d="M26 12 Q23 12 23 16 Q23 20 26 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+          </svg>
+        </div>
+        <span class="logo-text">Pitch<span class="logo-accent">Live</span></span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html" class="nav-link">Live Scores</a>
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="dashboard-hero">
+    <div class="dashboard-hero-container">
+      <h1 class="welcome-text">Welcome back, <span id="dash-username" class="logo-highlight">User</span></h1>
+      <p class="welcome-subtext">Here is your personalized football hub.</p>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    
+    <aside>
+      <h2 class="section-title">Your Favorites</h2>
+      <div class="favorites-grid" id="favorites-grid">
+        <!-- Injected via JS -->
+      </div>
+    </aside>
+
+    <section>
+      <h2 class="section-title">Personalized Feed</h2>
+      <div class="feed-placeholder">
+        <h3>Your Personalized Feed</h3>
+        <p>Follow teams, players, and leagues to see their upcoming fixtures and news here.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="auth/auth.js"></script>
+  <script src="search.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PitchLive — Live Football Scores & Match Stats</title>
+  <meta name="description" content="PitchLive brings you the fastest live football scores, match stats, and real-time updates from 1,200+ leagues worldwide." />
+  <meta property="og:title" content="PitchLive — Live Football Scores" />
+  <meta property="og:description" content="Track live football scores and match events in real-time." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1518605368461-1e122b513364?q=80&w=1200&auto=format&fit=crop" />
+  <meta name="keywords" content="live scores, football, fixtures, league table, sports news, match updates" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/search.css">
+  <link rel="stylesheet" href="mobile.css">
+
+  <!-- Security: DOMPurify -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+
+  <link rel="stylesheet" href="loaders.css">
+  <link rel="stylesheet" href="watch.css">
+  <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+
+  <!-- =================== NAVBAR =================== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="16" cy="16" r="15" fill="#0f172a" />
+            <rect x="6" y="8" width="20" height="16" rx="2" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <line x1="16" y1="8" x2="16" y2="24" stroke="#22c55e" stroke-width="1.5" />
+            <circle cx="16" cy="16" r="3" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <path d="M6 12 Q9 12 9 16 Q9 20 6 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            <path d="M26 12 Q23 12 23 16 Q23 20 26 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+          </svg>
+        </div>
+        <span class="logo-text">Pitch<span class="logo-accent">Live</span></span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#live" class="nav-link active">Live</a></li>
+        <li><a href="#fixtures" class="nav-link">Fixtures</a></li>
+        <li><a href="#leagues" class="nav-link">Leagues</a></li>
+        <li><a href="predictions.html" class="nav-link">Predictions</a></li>
+        <li><a href="#news" class="nav-link">News</a></li>
+        <li><a href="#players" class="nav-link">Players</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-search" id="nav-search-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+        <button class="nav-notifications" id="nav-notif-btn" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="notif-dot"></span>
+        </button>
+        <!-- Auth: shown when NOT logged in -->
+        <a href="auth/login.html" class="btn-primary" id="nav-login-btn">Sign In</a>
+
+        <!-- Auth: shown when logged in -->
+        <div id="nav-user-menu" style="display:none;position:relative;">
+          <button id="nav-user-trigger" style="display:flex;align-items:center;gap:8px;background:rgba(30,41,59,0.8);border:1px solid rgba(148,163,184,0.15);border-radius:999px;padding:6px 14px 6px 6px;cursor:pointer;color:#F8FAFC;font-size:14px;font-weight:500;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(34,197,94,0.4)'" onmouseout="this.style.borderColor='rgba(148,163,184,0.15)'">
+            <div id="nav-user-avatar-placeholder" style="width:28px;height:28px;border-radius:50%;background:rgba(34,197,94,0.2);border:1.5px solid #22C55E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#22C55E;flex-shrink:0;" id="nav-avatar-init">?</div>
+            <span id="nav-user-name">Account</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div id="nav-user-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 8px);background:rgba(30,41,59,0.98);backdrop-filter:blur(16px);border:1px solid rgba(148,163,184,0.12);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 16px 48px rgba(0,0,0,0.5);z-index:1000;">
+            <a href="auth/profile.html" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#F8FAFC;text-decoration:none;font-size:14px;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">👤 My Profile</a>
+            <a href="auth/profile.html#sessions" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#F8FAFC;text-decoration:none;font-size:14px;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">🖥️ Sessions</a>
+            <div style="height:1px;background:rgba(255,255,255,0.06);margin:6px 0;"></div>
+            <button id="nav-logout-btn" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#FCA5A5;background:transparent;border:none;cursor:pointer;font-size:14px;width:100%;text-align:left;font-family:'Inter',sans-serif;transition:background 0.15s;" onmouseover="this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.background='transparent'">🚪 Sign Out</button>
+          </div>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Overlay -->
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-modal">
+      <input type="text" class="search-input" id="global-search-input" placeholder="Search for players, teams, or leagues..." autocomplete="off">
+      <button class="search-close" id="search-close">×</button>
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 15px;"></div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <ul>
+      <li><a href="#live" class="mobile-nav-link">⚡ Live Scores</a></li>
+      <li><a href="#fixtures" class="mobile-nav-link">📅 Fixtures</a></li>
+      <li><a href="#leagues" class="mobile-nav-link">🏆 Leagues</a></li>
+      <li><a href="#news" class="mobile-nav-link">📰 News</a></li>
+      <li><a href="#players" class="mobile-nav-link">⭐ Players</a></li>
+    </ul>
+    <button class="btn-primary mobile-signin">Sign In Free</button>
+  </div>
+
+  <!-- =================== LIVE SCORES =================== -->
+  <section class="section live-section" id="live" style="padding-top: 120px;">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <div class="live-indicator">
+            <span class="live-pulse"></span>
+            <span>LIVE</span>
+          </div>
+          <h2 class="section-title">Live Scores</h2>
+        </div>
+        <div class="section-controls">
+          <div class="date-nav">
+            <button class="date-btn" id="prev-date">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="date-current" id="current-date">Today</span>
+            <button class="date-btn" id="next-date">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <button class="btn-outline-sm" id="view-all-live">View All</button>
+        </div>
+      </div>
+
+      <div class="live-scores-grid" id="live-scores-grid">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== FIXTURES =================== -->
+  <section class="section fixtures-section" id="fixtures">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">Today's Fixtures</h2>
+          <span class="section-subtitle">Live action and upcoming</span>
+        </div>
+        <button class="btn-outline-sm">Full Schedule</button>
+      </div>
+      <div class="fixtures-list" id="fixtures-list">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== STANDINGS =================== -->
+  <section class="section standings-section" id="standings">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">League Standings</h2>
+          <span class="section-subtitle">Current positions and form</span>
+        </div>
+      </div>
+      <div class="sidebar-card standings-card" style="max-width: 800px; margin: 0 auto;">
+        <div class="sidebar-card-header">
+          <h3>Premier League</h3>
+        </div>
+        <div class="standings-table" id="standings-table">
+          <!-- Dynamically rendered -->
+        </div>
+        <a href="#" class="sidebar-link">Full Table →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== TOP PLAYERS =================== -->
+  <section class="section players-section" id="players">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">Top Players</h2>
+          <span class="section-subtitle">Performance leaders this season</span>
+        </div>
+        <div class="player-stat-tabs" id="player-stat-tabs">
+          <button class="player-tab active" data-stat="goals">Goals</button>
+          <button class="player-tab" data-stat="assists">Assists</button>
+          <button class="player-tab" data-stat="rating">Rating</button>
+          <button class="player-tab" data-stat="motm">MOTM</button>
+        </div>
+      </div>
+      <div class="players-showcase" id="players-showcase">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =================== TRENDING NEWS =================== -->
+  <section class="section news-section" id="news">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-title-group">
+          <h2 class="section-title">Trending Football News</h2>
+          <span class="section-subtitle">Breaking stories and updates</span>
+        </div>
+        <div class="news-filter-tabs" id="news-filter">
+          <button class="news-tab active" data-category="all">All</button>
+          <button class="news-tab" data-category="transfers">Transfers</button>
+          <button class="news-tab" data-category="analysis">Analysis</button>
+          <button class="news-tab" data-category="interviews">Interviews</button>
+        </div>
+      </div>
+      <div class="news-layout">
+        <div class="news-featured" id="news-featured">
+          <!-- Dynamically rendered -->
+        </div>
+        <div class="news-sidebar" id="news-sidebar">
+          <!-- Dynamically rendered -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- =================== FOOTER =================== -->
+  <footer class="footer" id="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo footer-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="15" fill="#0f172a" />
+              <rect x="6" y="8" width="20" height="16" rx="2" stroke="#22c55e" stroke-width="1.5" fill="none" />
+              <line x1="16" y1="8" x2="16" y2="24" stroke="#22c55e" stroke-width="1.5" />
+              <circle cx="16" cy="16" r="3" stroke="#22c55e" stroke-width="1.5" fill="none" />
+              <path d="M6 12 Q9 12 9 16 Q9 20 6 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+              <path d="M26 12 Q23 12 23 16 Q23 20 26 20" stroke="#22c55e" stroke-width="1.5" fill="none" />
+            </svg>
+          </div>
+          <span class="logo-text">Pitch<span class="logo-accent">Live</span></span>
+        </a>
+        <p class="footer-tagline">The ultimate live football companion. Real-time scores, match stats, and breaking news.</p>
+        <div class="social-links">
+          <a href="#" class="social-link" aria-label="Twitter/X">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.843L1.254 2.25H8.08l4.259 5.63L18.244 2.25zM17.083 19.77h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="YouTube">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+          </a>
+          <a href="#" class="social-link" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.22 8.22 0 004.84 1.56V6.78a4.85 4.85 0 01-1.07-.09z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+
+        <div class="footer-col">
+          <h4>Leagues</h4>
+          <ul>
+            <li><a href="#">Premier League</a></li>
+            <li><a href="#">La Liga</a></li>
+            <li><a href="#">Bundesliga</a></li>
+            <li><a href="#">Serie A</a></li>
+            <li><a href="#">Champions League</a></li>
+            <li><a href="#">World Cup</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#">Live Scores</a></li>
+            <li><a href="#">Statistics</a></li>
+            <li><a href="#">Predictions</a></li>
+            <li><a href="#">Fantasy Sports</a></li>
+            <li><a href="#">Mobile App</a></li>
+            <li><a href="#">API Access</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Advertise</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 PitchLive Inc. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+      <div class="footer-app-badges">
+        <a href="#" class="app-badge" id="app-store-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06c-.22.15-2.19 1.3-2.16 3.87.03 3.06 2.67 4.08 2.7 4.09-.03.07-.42 1.44-1.39 2.51M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <div>
+            <small>Download on the</small>
+            <strong>App Store</strong>
+          </div>
+        </a>
+        <a href="#" class="app-badge" id="play-store-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 20.5v-17c0-.83.94-1.3 1.6-.8l14 8.5c.62.38.62 1.22 0 1.6l-14 8.5c-.66.5-1.6.03-1.6-.8z" opacity=".6"/><path d="M3 20.5v-17c0-.83.94-1.3 1.6-.8l7 4.25-7 4.25v-8.5l-1.6.8z" opacity="0"/></svg>
+          <div>
+            <small>Get it on</small>
+            <strong>Google Play</strong>
+          </div>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =================== WATCH LIVE MODAL =================== -->
+  <div class="watch-modal-overlay" id="watch-modal-overlay">
+    <div class="watch-modal" id="watch-modal">
+      <div class="watch-modal-handle"></div>
+      <button id="close-watch-modal" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <div class="watch-modal-header">
+        <h2 class="watch-modal-title" id="watch-modal-title">Live Match</h2>
+        <div class="watch-modal-subtitle">Select a stream to watch</div>
+      </div>
+
+      <div class="watch-modal-layout">
+        <!-- Left: Streams -->
+        <div class="streams-list" id="streams-list">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Right: Chat -->
+        <div class="watch-chat" id="watch-chat-container" style="display: none;">
+          <div class="chat-header">
+            <span class="live-pulse"></span> Match Chat
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <!-- Injected via JS -->
+          </div>
+          <form class="chat-input-area" id="chat-form">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Say something..." autocomplete="off">
+            <button type="submit" class="chat-send-btn" aria-label="Send">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+    <a href="index.html" class="mbn-item active">
+      <svg><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      Home
+    </a>
+    <a href="league.html" class="mbn-item">
+      <svg><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      Leagues
+    </a>
+    <a href="predictions.html" class="mbn-item">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+      Predict
+    </a>
+    <a href="auth/profile.html" class="mbn-item">
+      <svg><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      Profile
+    </a>
+  </nav>
+
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="auth/auth.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // ---- Navbar Auth State ----
+    (async () => {
+      // Update navbar immediately from cache (no flash)
+      const cached = AuthManager.getCachedUser();
+      if (cached) {
+        document.getElementById('nav-login-btn').style.display = 'none';
+        document.getElementById('nav-user-menu').style.display = 'flex';
+        document.getElementById('nav-user-name').textContent = cached.display_name || cached.username;
+        document.getElementById('nav-avatar-init').textContent = (cached.display_name || cached.username || '?')[0].toUpperCase();
+      }
+
+      // Then verify with server in background
+      const token = window.TokenStorage?.getAccessToken();
+      if (token) {
+        try {
+          const user = await AuthManager.getUser();
+          if (user) {
+            document.getElementById('nav-login-btn').style.display = 'none';
+            document.getElementById('nav-user-menu').style.display = 'flex';
+            document.getElementById('nav-user-name').textContent = user.display_name || user.username;
+            document.getElementById('nav-avatar-init').textContent = (user.display_name || user.username || '?')[0].toUpperCase();
+          }
+        } catch {}
+      }
+    })();
+
+    // Dropdown toggle
+    const trigger = document.getElementById('nav-user-trigger');
+    const dropdown = document.getElementById('nav-user-dropdown');
+    if (trigger) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = dropdown.style.display !== 'none';
+        dropdown.style.display = isOpen ? 'none' : 'block';
+      });
+      document.addEventListener('click', () => { if(dropdown) dropdown.style.display = 'none'; });
+    }
+
+    // Logout button
+    document.getElementById('nav-logout-btn')?.addEventListener('click', () => {
+      AuthManager.logout();
+    });
+
+    // Sign In button on hero CTA also goes to login
+    document.getElementById('hero-cta')?.addEventListener('click', () => {
+      if (!AuthManager.isAuthenticated()) window.location.href = 'auth/login.html';
+    });
+    document.getElementById('cta-pro-btn')?.addEventListener('click', () => {
+      if (!AuthManager.isAuthenticated()) window.location.href = 'auth/register.html';
+    });
+  </script>
+  <script src="/search.js"></script>
+  <script src="/notifications-ui.js"></script>
+  <script src="mobile-gestures.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PitchLive Admin Platform</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="admin/admin.css">
+  
+  <!-- SECURITY: Protect page immediately before body loads -->
+  <script>
+    (function checkSecurity() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/index.html'; // Kick out
+        return;
+      }
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.role !== 'admin') {
+          window.location.href = '/index.html'; // Kick out
+        }
+      } catch (e) {
+        window.location.href = '/index.html'; // Kick out
+      }
+    })();
+  </script>
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-icon">⚽</span>
+        PitchLive<span style="color: #22c55e;">Admin</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-target="view-dashboard">
+          <span>📊</span> Dashboard
+        </a>
+        <a href="#users" class="nav-item" data-target="view-users">
+          <span>👥</span> User Management
+        </a>
+        <a href="#teams" class="nav-item" data-target="view-teams">
+          <span>🛡️</span> Team Management
+        </a>
+        <a href="#players" class="nav-item" data-target="view-players">
+          <span>🏃</span> Player Management
+        </a>
+        <a href="#leagues" class="nav-item" data-target="view-leagues">
+          <span>🏆</span> League Management
+        </a>
+        <a href="#matches" class="nav-item" data-target="view-matches">
+          <span>⏱️</span> Match Management
+        </a>
+        <a href="#news" class="nav-item" data-target="view-news">
+          <span>📰</span> News Management
+        </a>
+        <a href="#notifications" class="nav-item" data-target="view-notifications">
+          <span>🔔</span> Notifications Engine
+        </a>
+        <a href="#streams" class="nav-item" data-target="view-streams">
+          <span>📺</span> Live Streams
+        </a>
+      </nav>
+
+      <div style="margin-top: auto; padding: 20px;">
+        <button id="logout-btn" style="width: 100%; padding: 12px; background: rgba(255,0,0,0.1); color: #ef4444; border: 1px solid rgba(255,0,0,0.2); border-radius: 8px; cursor: pointer; font-weight: 600;">Secure Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <header class="topbar">
+        <h2>Platform Overview</h2>
+        <div class="admin-profile">
+          <div class="admin-avatar">A</div>
+          <span>System Administrator</span>
+        </div>
+      </header>
+
+      <!-- Dashboard View -->
+      <section id="view-dashboard" class="admin-view active">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Active Users</div>
+            <div class="metric-value" id="val-users">--</div>
+            <div class="metric-trend positive">+12% this week</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">API Requests/min</div>
+            <div class="metric-value" id="val-revenue">1,240</div>
+            <div class="metric-trend positive">+5.4% this week</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Live Matches Tracked</div>
+            <div class="metric-value" id="val-traffic">42</div>
+            <div class="metric-trend neutral">Stable</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Push Notifications Sent</div>
+            <div class="metric-value" id="val-conversion">85K</div>
+            <div class="metric-trend positive">+12.2% this week</div>
+          </div>
+        </div>
+
+        <div class="charts-container">
+          <div class="chart-card">
+            <h3>Active Users (Live)</h3>
+            <canvas id="revenueChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Most Followed Entities</h3>
+            <table class="data-table" id="popular-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Entity ID</th>
+                  <th>Followers</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- User Management View -->
+      <section id="view-users" class="admin-view">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Registered Users</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr><td colspan="6" style="text-align:center; padding: 20px;">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Notifications Engine View -->
+      <section id="view-notifications" class="admin-view">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Broadcast Push Notification</h3>
+          </div>
+          <div style="padding: 20px;">
+            <p style="color: var(--muted); margin-bottom: 20px;">Send a targeted real-time push notification to all users who follow a specific entity.</p>
+            
+            <div class="form-group">
+              <label>Entity Type</label>
+              <select id="notif-entity-type" class="form-control">
+                <option value="team">Team</option>
+                <option value="league">League</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Entity ID</label>
+              <input type="text" id="notif-entity-id" class="form-control" placeholder="e.g. PL or 101">
+            </div>
+
+            <div class="form-group">
+              <label>Notification Type</label>
+              <select id="notif-type" class="form-control">
+                <option value="goal">Goal Scored</option>
+                <option value="news">Breaking News</option>
+                <option value="transfer">Transfer Update</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="notif-title" class="form-control" placeholder="e.g. GOAL: Man City">
+            </div>
+
+            <div class="form-group">
+              <label>Message</label>
+              <textarea id="notif-message" class="form-control" rows="3" placeholder="Erling Haaland scores in the 89th minute!"></textarea>
+            </div>
+
+            <button id="send-push-btn" class="btn-primary" style="margin-top: 10px;">Broadcast Notification</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Streams Management View -->
+      <section id="view-streams" class="admin-view">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Add Live Stream Link</h3>
+          </div>
+          <div style="padding: 20px;">
+            <p style="color: var(--muted); margin-bottom: 20px;">Add an external streaming link for a specific match. Registered users will see this link when they click on the live match card.</p>
+            
+            <div class="form-group">
+              <label>Match ID</label>
+              <input type="text" id="stream-match-id" class="form-control" placeholder="e.g. m_102 (from API-Football)">
+            </div>
+            
+            <div class="form-group">
+              <label>Source Name</label>
+              <input type="text" id="stream-source" class="form-control" placeholder="e.g. Server 1 (HD English)">
+            </div>
+
+            <div class="form-group">
+              <label>External URL</label>
+              <input type="url" id="stream-url" class="form-control" placeholder="https://stream-provider.com/watch/...">
+            </div>
+
+            <div class="form-group">
+              <label>Language</label>
+              <input type="text" id="stream-lang" class="form-control" placeholder="EN, ES, AR..." value="EN">
+            </div>
+
+            <button id="add-stream-btn" class="btn-primary" style="margin-top: 10px;">Make Stream Live</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Placeholder Views for remaining modules -->
+      <section id="view-teams" class="admin-view"><div class="panel"><h3 style="padding: 20px;">Team Management (Mock Data Editor)</h3><p style="padding: 0 20px 20px;">Integrate local JSON editing here.</p></div></section>
+      <section id="view-players" class="admin-view"><div class="panel"><h3 style="padding: 20px;">Player Management</h3><p style="padding: 0 20px 20px;">Manage global player stats overriding API-Football here.</p></div></section>
+      <section id="view-leagues" class="admin-view"><div class="panel"><h3 style="padding: 20px;">League Management</h3></div></section>
+      <section id="view-matches" class="admin-view"><div class="panel"><h3 style="padding: 20px;">Match Management</h3></div></section>
+      <section id="view-news" class="admin-view"><div class="panel"><h3 style="padding: 20px;">News Management</h3><p style="padding: 0 20px 20px;">Create and publish news articles.</p></div></section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="admin/admin.js"></script>
+</body>
+</html>
+
